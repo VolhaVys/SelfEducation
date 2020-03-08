@@ -1,0 +1,39 @@
+Список слов ( пнуть меня )
+Вопросы для JS разработчика (5/70) https://habr.com/ru/post/486820/
+https://habr.com/en/post/224187/
+https://habr.com/ru/post/485618/
+https://habr.com/en/post/84222/
+https://developer.mozilla.org/ru/docs/Web/HTTP/Redirections
+https://tproger.ru/articles/localstorage/
+https://habr.com/en/post/213515/
+https://tproger.ru/translations/beginner-git-cheatsheet/
+https://learn.javascript.ru/traversing-dom
+
+Готовое API
+https://reqres.in/
+C:\Program Files\JetBrains\WebStorm 2019.3.1
+https://habr.com/en/post/38642/
+https://praktikum.yandex.ru/web
+https://coursehunter.net/course/react-redux-professionalnaya-razrabotka
+https://habr.com/en/company/plarium/blog/433926/
+https://ffoodd.github.io/chaarts/
+
+React
+https://habr.com/ru/company/ruvds/blog/488666/?utm_source=vk&utm_medium=social&utm_campaign=desyat-react-komponentov-na-vse-sluchai-zh
+
+написать страничку на которой отображаются курсы валют + калькулятор
+почитать про jquery
+переписать всё на jquery
+
+структуры данных (пнуть меня)
+алгоритмы (пнуть меня)
+
+
+---- Homework
+appendChild vs append
+
+
+---- Done
+HTTP ( https://code.tutsplus.com/ru/tutorials/http-headers-for-dummies--net-8039 )
+xhr ( https://habr.com/ru/post/14246/ https://learn.javascript.ru/ajax-xmlhttprequest )
+JSON ( https://ruseller.com/lessons.php?id=1212 )
