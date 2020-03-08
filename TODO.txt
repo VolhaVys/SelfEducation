@@ -1,6 +1,5 @@
 Список слов ( пнуть меня )
 Вопросы для JS разработчика (5/70) https://habr.com/ru/post/486820/
-https://habr.com/en/post/224187/
 https://habr.com/ru/post/485618/
 https://habr.com/en/post/84222/
 https://developer.mozilla.org/ru/docs/Web/HTTP/Redirections
