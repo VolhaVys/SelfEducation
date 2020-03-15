@@ -8,6 +8,9 @@ https://habr.com/en/post/213515/
 https://tproger.ru/translations/beginner-git-cheatsheet/
 https://learn.javascript.ru/traversing-dom
 
+Trello:
+https://trello.com/b/r9witbcJ/javascript-classes
+
 Готовое API
 https://reqres.in/
 C:\Program Files\JetBrains\WebStorm 2019.3.1
