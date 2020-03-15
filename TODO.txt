@@ -11,6 +11,9 @@ https://learn.javascript.ru/traversing-dom
 Trello:
 https://trello.com/b/r9witbcJ/javascript-classes
 
+Git:
+https://github.com/VolhaVys/
+
 Готовое API
 https://reqres.in/
 C:\Program Files\JetBrains\WebStorm 2019.3.1

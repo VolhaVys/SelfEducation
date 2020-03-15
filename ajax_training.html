@@ -207,6 +207,7 @@
                         console.log(xhr.response);
                         addUser(JSON.parse(xhr.response));
                     }
+                    dialog.close();
                 };
                 xhr.send(json);
             });
