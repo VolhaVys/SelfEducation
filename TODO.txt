@@ -1,12 +1,14 @@
 Список слов ( пнуть меня )
 Вопросы для JS разработчика (5/70) https://habr.com/ru/post/486820/
-https://habr.com/ru/post/485618/
 https://habr.com/en/post/84222/
 https://developer.mozilla.org/ru/docs/Web/HTTP/Redirections
 https://tproger.ru/articles/localstorage/
 https://habr.com/en/post/213515/
 https://tproger.ru/translations/beginner-git-cheatsheet/
 https://learn.javascript.ru/traversing-dom
+
+Git
+https://github.com/VolhaVys/
 
 Готовое API
 https://reqres.in/
