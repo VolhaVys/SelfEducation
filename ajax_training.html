@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script type="application/javascript" src="dist/dialog-polyfill.js"></script>
 </head>
 <body>
 <script>
@@ -95,6 +96,7 @@
                     console.log(xhr.response);
                     let userEl = document.getElementById('user' + id);
                     let dialogDelete = document.getElementById('dialogDelete');
+                    dialogPolyfill.registerDialog(dialogDelete);
                     dialogDelete.showModal();
                     let deleteYes = document.getElementById('deleteYes');
                     deleteYes.addEventListener('click', function () {
@@ -125,6 +127,7 @@
                     document.getElementById('firstNameEdit').value = response.data['first_name'];
                     document.getElementById('lastNameEdit').value = response.data['last_name'];
                     document.getElementById('emailEdit').value = response.data['email'];
+                    dialogPolyfill.registerDialog(dialogEdit);
                     dialogEdit.showModal();
 
                 }
@@ -181,6 +184,7 @@
         let showUserFormBtn = document.getElementById('showUserFormBtn');
         let dialog = document.getElementById('dialog');
         showUserFormBtn.addEventListener('click', function () {
+            dialogPolyfill.registerDialog(dialog);
             dialog.showModal();
         });
 
