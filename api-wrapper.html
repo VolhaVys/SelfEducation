@@ -7,6 +7,21 @@
 </head>
 <body>
 <script>
+
+    let params = window
+        .location
+        .search
+        .replace('?','')
+        .split('&')
+        .reduce(
+            function(p,e){
+                let a = e.split('=');
+                p[ decodeURIComponent(a[0])] = decodeURIComponent(a[1]);
+                return p;
+            },
+            {}
+        );
+
     window.onload = function () {
 
         let xhr = new XMLHttpRequest();
@@ -21,6 +36,7 @@
                     console.log('Error ' + xhr.status + ':' + xhr.statusText)
                 } else {
                     console.log(xhr.response);
+                    window.history.pushState(null, 'Title', 'api-wrapper.html?page=' + pageNumber);
                     let response = JSON.parse(xhr.response);
                     let totalPages = response['total_pages'];
                     let pageText = document.getElementById('pageText');
@@ -32,21 +48,21 @@
                     pageText.innerHTML = pageNumber + 'of';
                     totalPagesText.innerHTML = totalPages;
                     if (pageNumber === 1) {
-                        prevButton.setAttribute("disabled", "true");
+                        prevButton.setAttribute('disabled', 'true');
                     } else {
-                        prevButton.removeAttribute("disabled")
+                        prevButton.removeAttribute('disabled')
                     }
                     if (pageNumber === totalPages) {
-                        nextButton.setAttribute("disabled", "true");
+                        nextButton.setAttribute('disabled', 'true');
                     } else {
-                        nextButton.removeAttribute("disabled")
+                        nextButton.removeAttribute('disabled');
                     }
                 }
             };
             xhr.send();
         }
 
-        let pageNumber = 1;
+        let pageNumber = +params.page;
         fillUserTable(pageNumber);
 
         function addUser(user) {
