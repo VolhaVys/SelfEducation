@@ -42,3 +42,4 @@ appendChild vs append
 HTTP ( https://code.tutsplus.com/ru/tutorials/http-headers-for-dummies--net-8039 )
 xhr ( https://habr.com/ru/post/14246/ https://learn.javascript.ru/ajax-xmlhttprequest )
 JSON ( https://ruseller.com/lessons.php?id=1212 )
+Git (https://htmlacademy.ru/blog/boost/tools/version-control-system)
