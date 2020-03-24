@@ -11,12 +11,12 @@
     let params = window
         .location
         .search
-        .replace('?','')
+        .replace('?', '')
         .split('&')
         .reduce(
-            function(p,e){
+            function (p, e) {
                 let a = e.split('=');
-                p[ decodeURIComponent(a[0])] = decodeURIComponent(a[1]);
+                p[decodeURIComponent(a[0])] = decodeURIComponent(a[1]);
                 return p;
             },
             {}
@@ -62,7 +62,13 @@
             xhr.send();
         }
 
-        let pageNumber = +params.page;
+        let pageNumber;
+        if (params.page != undefined) {
+            pageNumber = +params.page;
+        } else {
+            pageNumber = 1;
+        }
+
         fillUserTable(pageNumber);
 
         function addUser(user) {
@@ -150,8 +156,8 @@
             };
             xhr.send();
         };
-        let saveNewUserBtnEdit = document.getElementById('saveNewUserBtnEdit');
-        saveNewUserBtnEdit.addEventListener('click', function (event) {
+        let saveUserBtn = document.getElementById('saveUserBtn');
+        saveUserBtn.addEventListener('click', function (event) {
             submitForm('addUserFormEdit', () => {
                 let user = getNewUserEdit();
                 let json = JSON.stringify(user);
@@ -287,9 +293,11 @@
     .pageButton {
         display: flex;
     }
+
     .page_Text {
         padding-left: 3px;
     }
+
     .total_Pages_Text {
         padding-right: 3px;
     }
@@ -329,7 +337,7 @@
                 <span>Email: </span>
                 <input name="email" id="emailEdit" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
             </div>
-            <button id="saveNewUserBtnEdit" type="button">
+            <button id="saveUserBtn" type="button">
                 Save
             </button>
 
