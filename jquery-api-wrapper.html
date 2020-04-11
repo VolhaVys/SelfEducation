@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script type="application/javascript" src="dist/dialog-polyfill.js"></script>
+    <script type="application/javascript" src="jquery-1.8.3.js"></script>
 </head>
 <body>
 <script>
@@ -22,8 +23,7 @@
             {}
         );
 
-    window.onload = function () {
-
+    $(document).ready(function () {
         let xhr = new XMLHttpRequest();
         xhr.onerror = function () {
             console.log(arguments);
@@ -39,23 +39,23 @@
                     window.history.pushState(null, 'Title', 'api-wrapper.html?page=' + pageNumber);
                     let response = JSON.parse(xhr.response);
                     let totalPages = response['total_pages'];
-                    let pageText = document.getElementById('pageText');
-                    let totalPagesText = document.getElementById('totalPagesText');
 
                     for (let i = 0; i < response.data.length; i++) {
                         addUser(response.data[i]);
                     }
-                    pageText.innerHTML = pageNumber + 'of';
-                    totalPagesText.innerHTML = totalPages;
+                    $('#pageText').html(pageNumber + 'of');
+
+                    $('#totalPagesText').html(totalPages);
+
                     if (pageNumber === 1) {
-                        prevButton.setAttribute('disabled', 'true');
+                        prevButton.attr('disabled', 'true');
                     } else {
-                        prevButton.removeAttribute('disabled')
+                        prevButton.removeAttr('disabled')
                     }
                     if (pageNumber === totalPages) {
-                        nextButton.setAttribute('disabled', 'true');
+                        nextButton.attr('disabled', 'true');
                     } else {
-                        nextButton.removeAttribute('disabled');
+                        nextButton.removeAttr('disabled');
                     }
                 }
             };
@@ -72,26 +72,23 @@
         fillUserTable(pageNumber);
 
         function addUser(user) {
-            let userEl = document.createElement('tr');
-            userEl.className = 'user-row';
-            userEl.id = 'user' + user.id;
-            userEl.innerHTML = generateUserTmpl(user);
-            let usersTable = document.getElementById('usersTable');
-            usersTable.appendChild(userEl);
+            let userEl = $('<tr/>').attr('id', 'user' + user.id).addClass('user-row');
+            userEl.html(generateUserTmpl(user));
+           $('#usersTable').append(userEl);
         }
 
-        let nextButton = document.getElementById('nextButton');
-        nextButton.addEventListener('click', function () {
-            let userEls = document.querySelectorAll('#usersTable .user-row');
+        let nextButton = $('#nextButton');
+        nextButton.click(function () {
+            let userEls = $('#usersTable .user-row');
             for (let i = 0; i < userEls.length; i++) {
                 userEls[i].parentElement.removeChild(userEls[i]);
             }
             ++pageNumber;
             fillUserTable(pageNumber);
         });
-        let prevButton = document.getElementById('prevButton');
-        prevButton.addEventListener('click', function () {
-            let userEls = document.querySelectorAll('#usersTable .user-row');
+        let prevButton = $('#prevButton');
+        prevButton.click(function () {
+            let userEls = $('#usersTable .user-row');
             for (let i = 0; i < userEls.length; i++) {
                 userEls[i].parentElement.removeChild(userEls[i]);
             }
@@ -101,7 +98,7 @@
         });
 
         function generateUserTmpl(user) {
-            let template = document.getElementById('userTemplate').innerHTML;
+            let template = $('#userTemplate').innerHTML;
             return template.replace(/#{avatar}/g, user.avatar)
                 .replace(/#{name}/g, user.first_name)
                 .replace(/#{surname}/g, user.last_name)
@@ -116,17 +113,15 @@
                     console.log('Error ' + xhr.status + ':' + xhr.statusText)
                 } else {
                     console.log(xhr.response);
-                    let userEl = document.getElementById('user' + id);
-                    let dialogDelete = document.getElementById('dialogDelete');
+                    let userEl = $('#user' + id);
+                    let dialogDelete = $('#dialogDelete');
                     dialogPolyfill.registerDialog(dialogDelete);
                     dialogDelete.showModal();
-                    let deleteYes = document.getElementById('deleteYes');
-                    deleteYes.addEventListener('click', function () {
+                   $('#deleteYes').click(function () {
                         userEl.remove();
                         dialogDelete.close();
                     });
-                    let deleteNo = document.getElementById('deleteNo');
-                    deleteNo.addEventListener('click', function () {
+                    $('#deleteNo').click(function () {
                         dialogDelete.close();
                     })
 
@@ -143,12 +138,12 @@
                 } else {
                     console.log(xhr.response);
                     let response = JSON.parse(xhr.response);
-                    let dialogEdit = document.getElementById('dialogEdit');
-                    document.getElementById('userAvatar').value = response.data['avatar'];
-                    document.getElementById('userId').value = response.data['id'];
-                    document.getElementById('firstNameEdit').value = response.data['first_name'];
-                    document.getElementById('lastNameEdit').value = response.data['last_name'];
-                    document.getElementById('emailEdit').value = response.data['email'];
+                    let dialogEdit = $('#dialogEdit');
+                    $('#userAvatar').value = response.data['avatar'];
+                    $('#userId').value = response.data['id'];
+                    $('#firstNameEdit').value = response.data['first_name'];
+                    $('#lastNameEdit').value = response.data['last_name'];
+                    $('#emailEdit').value = response.data['email'];
                     dialogPolyfill.registerDialog(dialogEdit);
                     dialogEdit.showModal();
 
@@ -156,8 +151,7 @@
             };
             xhr.send();
         };
-        let saveUserBtn = document.getElementById('saveUserBtn');
-        saveUserBtn.addEventListener('click', function (event) {
+        $('#saveUserBtn').click(function (event) {
             submitForm('addUserFormEdit', () => {
                 let user = getNewUserEdit();
                 let json = JSON.stringify(user);
@@ -169,49 +163,46 @@
                     } else {
                         console.log(xhr.response);
                         let response = JSON.parse(xhr.response);
-                        let userEl = document.getElementById('user' + user.id);
-                        userEl.innerHTML = generateUserTmpl(response);
+                       $('#user' + user.id).html(generateUserTmpl(response));
                         dialogEdit.close();
                     }
                 };
                 xhr.send(json);
             });
         });
-        let closeNewUserEdit = document.getElementById('closeNewUserEdit');
-        let dialogEdit = document.getElementById('dialogEdit');
-        closeNewUserEdit.addEventListener('click', function (e) {
+        let dialogEdit = $('#dialogEdit');
+        $('#closeNewUserEdit').click( function (e) {
             e.preventDefault();
             dialogEdit.close();
         });
 
         function getNewUser() {
             return {
-                first_name: document.getElementById('firstName').value,
-                last_name: document.getElementById('lastName').value,
-                email: document.getElementById('email').value,
+                first_name: $('#firstName').value,
+                last_name: $('#lastName').value,
+                email: $('#email').value,
                 avatar: 'image/no_photo.png'
             };
         }
 
         function getNewUserEdit() {
             return {
-                avatar: document.getElementById('userAvatar').value,
-                id: document.getElementById('userId').value,
-                first_name: document.getElementById('firstNameEdit').value,
-                last_name: document.getElementById('lastNameEdit').value,
-                email: document.getElementById('emailEdit').value,
+                avatar: $('#userAvatar').value,
+                id: $('#userId').value,
+                first_name: $('#firstNameEdit').value,
+                last_name: $('#lastNameEdit').value,
+                email: $('#emailEdit').value,
             };
         }
 
-        let showUserFormBtn = document.getElementById('showUserFormBtn');
-        let dialog = document.getElementById('dialog');
-        showUserFormBtn.addEventListener('click', function () {
+        let dialog = $('#dialog');
+        $('#showUserFormBtn').click(function () {
             dialogPolyfill.registerDialog(dialog);
             dialog.showModal();
         });
 
         function submitForm(formId, callback) {
-            let form = document.getElementById(formId);
+            let form = $(formId);
             form.checkValidity();
             if (form.checkValidity()) {
                 callback();
@@ -220,8 +211,7 @@
             }
         }
 
-        let addNewUserBtn = document.getElementById('addNewUserBtn');
-        addNewUserBtn.addEventListener('click', function () {
+        $('#addNewUserBtn').click(function () {
             submitForm('addUserForm', () => {
                 let json = JSON.stringify(getNewUser());
                 xhr.open("POST", 'https://reqres.in/api/users', true);
@@ -239,14 +229,12 @@
             });
         });
 
-        let closeNewUserBtn = document.getElementById('closeNewUser');
-        closeNewUserBtn.addEventListener('click', function (e) {
+        $('#closeNewUser').click(function (e) {
             e.preventDefault();
             dialog.close();
         });
 
-    }
-    ;
+    });
 
 
 </script>
