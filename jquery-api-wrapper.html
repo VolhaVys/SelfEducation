@@ -24,218 +24,224 @@
         );
 
     $(document).ready(function () {
-        let xhr = new XMLHttpRequest();
-        xhr.onerror = function () {
-            console.log(arguments);
-        };
+            let xhr = new XMLHttpRequest();
+            xhr.onerror = function () {
+                console.log(arguments);
+            };
 
-        function fillUserTable(pageNumber) {
-            $.ajax({
-                url: 'https://reqres.in/api/users?page=' + pageNumber,
-                dataType: "json",
-                error: function () {
-                    console.log(arguments);
-                },
-                success: function (response) {
-                    console.log(response);
-                    window.history.pushState(null, 'Title', 'jquery-api-wrapper.html?page=' + pageNumber);
-                    let totalPages = response['total_pages'];
+            function fillUserTable(pageNumber) {
+                $.ajax({
+                    url: 'https://reqres.in/api/users?page=' + pageNumber,
+                    dataType: "json",
+                    error: function () {
+                        console.log(arguments);
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        window.history.pushState(null, 'Title', 'jquery-api-wrapper.html?page=' + pageNumber);
+                        let totalPages = response['total_pages'];
 
-                    for (let i = 0; i < response.data.length; i++) {
-                        addUser(response.data[i]);
+                        for (let i = 0; i < response.data.length; i++) {
+                            addUser(response.data[i]);
+                        }
+                        $('#pageText').html(pageNumber + 'of');
+
+                        $('#totalPagesText').html(totalPages);
+
+                        if (pageNumber === 1) {
+                            prevButton.attr('disabled', 'true');
+                        } else {
+                            prevButton.removeAttr('disabled')
+                        }
+                        if (pageNumber === totalPages) {
+                            nextButton.attr('disabled', 'true');
+                        } else {
+                            nextButton.removeAttr('disabled');
+                        }
                     }
-                    $('#pageText').html(pageNumber + 'of');
-
-                    $('#totalPagesText').html(totalPages);
-
-                    if (pageNumber === 1) {
-                        prevButton.attr('disabled', 'true');
-                    } else {
-                        prevButton.removeAttr('disabled')
-                    }
-                    if (pageNumber === totalPages) {
-                        nextButton.attr('disabled', 'true');
-                    } else {
-                        nextButton.removeAttr('disabled');
-                    }
-                }
-            });
-        }
-
-        let pageNumber;
-        if (params.page != undefined) {
-            pageNumber = +params.page;
-        } else {
-            pageNumber = 1;
-        }
-
-        fillUserTable(pageNumber);
-
-        function addUser(user) {
-            let userEl = $('<tr/>').attr('id', 'user' + user.id).addClass('user-row');
-            userEl.html(generateUserTmpl(user));
-            $('#usersTable').append(userEl);
-        }
-
-        let nextButton = $('#nextButton');
-        nextButton.click(function () {
-            let userEls = $('#usersTable .user-row');
-            for (let i = 0; i < userEls.length; i++) {
-                userEls[i].parentElement.removeChild(userEls[i]);
+                });
             }
-            ++pageNumber;
-            fillUserTable(pageNumber);
-        });
-        let prevButton = $('#prevButton');
-        prevButton.click(function () {
-            let userEls = $('#usersTable .user-row');
-            for (let i = 0; i < userEls.length; i++) {
-                userEls[i].parentElement.removeChild(userEls[i]);
-            }
-            --pageNumber;
-            fillUserTable(pageNumber);
 
-        });
-
-        function generateUserTmpl(user) {
-            let template = $('#userTemplate').html();
-            return template.replace(/#{avatar}/g, user.avatar)
-                .replace(/#{name}/g, user.first_name)
-                .replace(/#{surname}/g, user.last_name)
-                .replace(/#{email}/g, user.email)
-                .replace(/#{id}/g, user.id);
-        }
-
-        window.deleteUser = function (id) {
-            $.ajax({
-                url: 'https://reqres.in/api/users/' + id,
-                type: 'DELETE',
-                dataType: "json",
-                error: function () {
-                    console.log(arguments);
-                },
-                success: function (response) {
-                    console.log(xhr.response);
-                    let userEl = $('#user' + id);
-                    let dialogDelete = $('#dialogDelete').get(0);
-                    dialogPolyfill.registerDialog(dialogDelete);
-                    dialogDelete.showModal();
-                    $('#deleteYes').click(function () {
-                        userEl.remove();
-                        dialogDelete.close();
-                    });
-                    $('#deleteNo').click(function () {
-                        dialogDelete.close();
-                    });
-                }
-            })
-        };
-
-        window.editUser = function (id) {
-            xhr.open('GET', 'https://reqres.in/api/users/' + id);
-            xhr.onload = function () {
-                if (xhr.status != 200) {
-                    console.log('Error ' + xhr.status + ':' + xhr.statusText)
-                } else {
-                    console.log(xhr.response);
-                    let response = JSON.parse(xhr.response);
-                    let dialogEdit = $('#dialogEdit');
-                    $('#userAvatar').value = response.data['avatar'];
-                    $('#userId').value = response.data['id'];
-                    $('#firstNameEdit').value = response.data['first_name'];
-                    $('#lastNameEdit').value = response.data['last_name'];
-                    $('#emailEdit').value = response.data['email'];
-                    dialogPolyfill.registerDialog(dialogEdit);
-                    dialogEdit.showModal();
-
-                }
-            };
-            xhr.send();
-        };
-        $('#saveUserBtn').click(function (event) {
-            submitForm('addUserFormEdit', () => {
-                let user = getNewUserEdit();
-                let json = JSON.stringify(user);
-                xhr.open("PUT", 'https://reqres.in/api/users/' + user.id, true);
-                xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-                xhr.onload = function () {
-                    if (xhr.status != 200) {
-                        console.log('Error ' + xhr.status + ':' + xhr.statusText)
-                    } else {
-                        console.log(xhr.response);
-                        let response = JSON.parse(xhr.response);
-                        $('#user' + user.id).html(generateUserTmpl(response));
-                        dialogEdit.close();
-                    }
-                };
-                xhr.send(json);
-            });
-        });
-        let dialogEdit = $('#dialogEdit');
-        $('#closeNewUserEdit').click(function (e) {
-            e.preventDefault();
-            dialogEdit.close();
-        });
-
-        function getNewUser() {
-            return {
-                first_name: $('#firstName').value,
-                last_name: $('#lastName').value,
-                email: $('#email').value,
-                avatar: 'image/no_photo.png'
-            };
-        }
-
-        function getNewUserEdit() {
-            return {
-                avatar: $('#userAvatar').value,
-                id: $('#userId').value,
-                first_name: $('#firstNameEdit').value,
-                last_name: $('#lastNameEdit').value,
-                email: $('#emailEdit').value,
-            };
-        }
-
-        let dialog = $('#dialog');
-        $('#showUserFormBtn').click(function () {
-            dialogPolyfill.registerDialog(dialog);
-            dialog.showModal();
-        });
-
-        function submitForm(formId, callback) {
-            let form = $(formId);
-            form.checkValidity();
-            if (form.checkValidity()) {
-                callback();
+            let pageNumber;
+            if (params.page != undefined) {
+                pageNumber = +params.page;
             } else {
-                form.classList.add('validated');
+                pageNumber = 1;
             }
-        }
 
-        $('#addNewUserBtn').click(function () {
-            submitForm('addUserForm', () => {
-                let json = JSON.stringify(getNewUser());
-                xhr.open("POST", 'https://reqres.in/api/users', true);
-                xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-                xhr.onload = function () {
-                    if (xhr.status != 201) {
-                        console.log('Error ' + xhr.status + ':' + xhr.statusText)
-                    } else {
-                        console.log(xhr.response);
-                        addUser(JSON.parse(xhr.response));
-                    }
-                    dialog.close();
-                };
-                xhr.send(json);
+            fillUserTable(pageNumber);
+
+            function addUser(user) {
+                let userEl = $('<tr/>').attr('id', 'user' + user.id).addClass('user-row');
+                userEl.html(generateUserTmpl(user));
+                $('#usersTable').append(userEl);
+            }
+
+            let nextButton = $('#nextButton');
+            nextButton.click(function () {
+                let userEls = $('#usersTable .user-row');
+                for (let i = 0; i < userEls.length; i++) {
+                    userEls[i].parentElement.removeChild(userEls[i]);
+                }
+                ++pageNumber;
+                fillUserTable(pageNumber);
             });
-        });
+            let prevButton = $('#prevButton');
+            prevButton.click(function () {
+                let userEls = $('#usersTable .user-row');
+                for (let i = 0; i < userEls.length; i++) {
+                    userEls[i].parentElement.removeChild(userEls[i]);
+                }
+                --pageNumber;
+                fillUserTable(pageNumber);
 
-        $('#closeNewUser').click(function (e) {
-            e.preventDefault();
-            dialog.close();
-        });
+            });
 
-    });
+            function generateUserTmpl(user) {
+                let template = $('#userTemplate').html();
+                return template.replace(/#{avatar}/g, user.avatar)
+                    .replace(/#{name}/g, user.first_name)
+                    .replace(/#{surname}/g, user.last_name)
+                    .replace(/#{email}/g, user.email)
+                    .replace(/#{id}/g, user.id);
+            }
+
+            window.deleteUser = function (id) {
+                $.ajax({
+                    url: 'https://reqres.in/api/users/' + id,
+                    type: 'DELETE',
+                    dataType: "json",
+                    error: function () {
+                        console.log(arguments);
+                    },
+                    success: function (response) {
+                        console.log(xhr.response);
+                        let userEl = $('#user' + id);
+                        let dialogDelete = $('#dialogDelete').get(0);
+                        dialogPolyfill.registerDialog(dialogDelete);
+                        dialogDelete.showModal();
+                        $('#deleteYes').click(function () {
+                            userEl.remove();
+                            dialogDelete.close();
+                        });
+                        $('#deleteNo').click(function () {
+                            dialogDelete.close();
+                        });
+                    }
+                })
+            };
+
+            window.editUser = function (id) {
+                $.ajax({
+                    url: 'https://reqres.in/api/users/' + id,
+                    dataType: "json",
+                    error: function () {
+                        console.log(arguments);
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        let dialogEdit = $('#dialogEdit').get(0);
+                        $('#userAvatar').val(response.data['avatar']);
+                        $('#userId').val(response.data['id']);
+                        $('#firstNameEdit').val(response.data['first_name']);
+                        $('#lastNameEdit').val(response.data['last_name']);
+                        $('#emailEdit').val(response.data['email']);
+                        dialogPolyfill.registerDialog(dialogEdit);
+                        dialogEdit.showModal();
+                    }
+                });
+            };
+
+            $('#saveUserBtn').click(function (event) {
+                submitForm('#addUserFormEdit', () => {
+                    let user = getNewUserEdit();
+                    $.ajax({
+                        url: 'https://reqres.in/api/users/' + user.id,
+                        type: "PUT",
+                        data: user,
+                        async: true,
+                        dataType: "json",
+                        error: function () {
+                            console.log(arguments);
+                        },
+                        success: function (response) {
+                            console.log(response);
+                            $('#user' + user.id).html(generateUserTmpl(response));
+                            dialogEdit.close();
+                        }
+                    });
+                });
+            });
+
+            let dialogEdit = $('#dialogEdit').get(0);
+            $('#closeNewUserEdit').click(function (e) {
+                e.preventDefault();
+                dialogEdit.close();
+            });
+
+            function getNewUser() {
+                return {
+                    first_name: $('#firstName').val(),
+                    last_name: $('#lastName').val(),
+                    email: $('#email').val(),
+                    avatar: 'image/no_photo.png'
+                };
+            }
+
+            function getNewUserEdit() {
+                return {
+                    avatar: $('#userAvatar').val(),
+                    id: $('#userId').val(),
+                    first_name: $('#firstNameEdit').val(),
+                    last_name: $('#lastNameEdit').val(),
+                    email: $('#emailEdit').val(),
+                };
+            }
+
+            let dialog = $('#dialog').get(0);
+            $('#showUserFormBtn').click(function () {
+                dialogPolyfill.registerDialog(dialog);
+                dialog.showModal();
+            });
+
+            function submitForm(formId, callback) {
+                let form = $(formId).get(0);
+                form.checkValidity();
+                if (form.checkValidity()) {
+                    callback();
+                } else {
+                    form.classList.add('validated');
+                }
+            }
+
+            $('#addNewUserBtn').click(function () {
+                submitForm('#addUserForm', () => {
+                    $.ajax({
+                        url: 'https://reqres.in/api/users',
+                        type: "POST",
+                        data: getNewUser(),
+                        async: true,
+                        dataType: "json",
+                        error: function () {
+                            console.log(arguments);
+                        },
+                        success: function (response) {
+                            console.log(xhr.response);
+                            addUser(response);
+                            dialog.close();
+                        }
+
+                    });
+                });
+            });
+
+            $('#closeNewUser').click(function (e) {
+                e.preventDefault();
+                dialog.close();
+            });
+
+        }
+    );
 
 
 </script>
