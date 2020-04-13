@@ -30,14 +30,15 @@
         };
 
         function fillUserTable(pageNumber) {
-            xhr.open('GET', 'https://reqres.in/api/users?page=' + pageNumber);
-            xhr.onload = function () {
-                if (xhr.status != 200) {
-                    console.log('Error ' + xhr.status + ':' + xhr.statusText)
-                } else {
-                    console.log(xhr.response);
-                    window.history.pushState(null, 'Title', 'api-wrapper.html?page=' + pageNumber);
-                    let response = JSON.parse(xhr.response);
+            $.ajax({
+                url: 'https://reqres.in/api/users?page=' + pageNumber,
+                dataType: "json",
+                error: function () {
+                    console.log(arguments);
+                },
+                success: function (response) {
+                    console.log(response);
+                    window.history.pushState(null, 'Title', 'jquery-api-wrapper.html?page=' + pageNumber);
                     let totalPages = response['total_pages'];
 
                     for (let i = 0; i < response.data.length; i++) {
@@ -58,8 +59,7 @@
                         nextButton.removeAttr('disabled');
                     }
                 }
-            };
-            xhr.send();
+            });
         }
 
         let pageNumber;
@@ -74,7 +74,7 @@
         function addUser(user) {
             let userEl = $('<tr/>').attr('id', 'user' + user.id).addClass('user-row');
             userEl.html(generateUserTmpl(user));
-           $('#usersTable').append(userEl);
+            $('#usersTable').append(userEl);
         }
 
         let nextButton = $('#nextButton');
@@ -98,7 +98,7 @@
         });
 
         function generateUserTmpl(user) {
-            let template = $('#userTemplate').innerHTML;
+            let template = $('#userTemplate').html();
             return template.replace(/#{avatar}/g, user.avatar)
                 .replace(/#{name}/g, user.first_name)
                 .replace(/#{surname}/g, user.last_name)
@@ -107,27 +107,28 @@
         }
 
         window.deleteUser = function (id) {
-            xhr.open('DELETE', 'https://reqres.in/api/users/' + id);
-            xhr.onload = function () {
-                if (xhr.status != 204) {
-                    console.log('Error ' + xhr.status + ':' + xhr.statusText)
-                } else {
+            $.ajax({
+                url: 'https://reqres.in/api/users/' + id,
+                type: 'DELETE',
+                dataType: "json",
+                error: function () {
+                    console.log(arguments);
+                },
+                success: function (response) {
                     console.log(xhr.response);
                     let userEl = $('#user' + id);
-                    let dialogDelete = $('#dialogDelete');
+                    let dialogDelete = $('#dialogDelete').get(0);
                     dialogPolyfill.registerDialog(dialogDelete);
                     dialogDelete.showModal();
-                   $('#deleteYes').click(function () {
+                    $('#deleteYes').click(function () {
                         userEl.remove();
                         dialogDelete.close();
                     });
                     $('#deleteNo').click(function () {
                         dialogDelete.close();
-                    })
-
+                    });
                 }
-            };
-            xhr.send();
+            })
         };
 
         window.editUser = function (id) {
@@ -163,7 +164,7 @@
                     } else {
                         console.log(xhr.response);
                         let response = JSON.parse(xhr.response);
-                       $('#user' + user.id).html(generateUserTmpl(response));
+                        $('#user' + user.id).html(generateUserTmpl(response));
                         dialogEdit.close();
                     }
                 };
@@ -171,7 +172,7 @@
             });
         });
         let dialogEdit = $('#dialogEdit');
-        $('#closeNewUserEdit').click( function (e) {
+        $('#closeNewUserEdit').click(function (e) {
             e.preventDefault();
             dialogEdit.close();
         });
