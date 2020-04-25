@@ -24,10 +24,6 @@
         );
 
     $(document).ready(function () {
-            let xhr = new XMLHttpRequest();
-            xhr.onerror = function () {
-                console.log(arguments);
-            };
 
             function fillUserTable(pageNumber) {
                 $.ajax({
