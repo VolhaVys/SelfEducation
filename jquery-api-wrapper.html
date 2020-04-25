@@ -72,26 +72,20 @@
             fillUserTable(pageNumber);
 
             function addUser(user) {
-                let userEl = $('<tr/>').attr('id', 'user' + user.id).addClass('user-row');
+                let userEl = $('<tr class="user-row"/>').attr('id', 'user' + user.id)
                 userEl.html(generateUserTmpl(user));
                 $('#usersTable').append(userEl);
             }
 
             let nextButton = $('#nextButton');
             nextButton.click(function () {
-                let userEls = $('#usersTable .user-row');
-                for (let i = 0; i < userEls.length; i++) {
-                    userEls[i].parentElement.removeChild(userEls[i]);
-                }
+                $('#usersTable .user-row').remove();
                 ++pageNumber;
                 fillUserTable(pageNumber);
             });
             let prevButton = $('#prevButton');
             prevButton.click(function () {
-                let userEls = $('#usersTable .user-row');
-                for (let i = 0; i < userEls.length; i++) {
-                    userEls[i].parentElement.removeChild(userEls[i]);
-                }
+                $('#usersTable .user-row').remove();
                 --pageNumber;
                 fillUserTable(pageNumber);
 
