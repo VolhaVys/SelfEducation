@@ -44,17 +44,17 @@
                         for (let i = 0; i < response.data.length; i++) {
                             addUser(response.data[i]);
                         }
-                        $('#pageText').html(pageNumber + 'of');
+                        $('#pageText').text(pageNumber + 'of');
 
-                        $('#totalPagesText').html(totalPages);
+                        $('#totalPagesText').text(totalPages);
 
                         if (pageNumber === 1) {
-                            prevButton.attr('disabled', 'true');
+                            prevButton.prop('disabled', 'true');
                         } else {
                             prevButton.removeAttr('disabled')
                         }
                         if (pageNumber === totalPages) {
-                            nextButton.attr('disabled', 'true');
+                            nextButton.prop('disabled', 'true');
                         } else {
                             nextButton.removeAttr('disabled');
                         }
@@ -115,7 +115,7 @@
                         console.log(arguments);
                     },
                     success: function (response) {
-                        console.log(xhr.response);
+                        console.log(arguments);
                         let userEl = $('#user' + id);
                         let dialogDelete = $('#dialogDelete').get(0);
                         dialogPolyfill.registerDialog(dialogDelete);
@@ -159,7 +159,6 @@
                         url: 'https://reqres.in/api/users/' + user.id,
                         type: "PUT",
                         data: user,
-                        async: true,
                         dataType: "json",
                         error: function () {
                             console.log(arguments);
@@ -206,11 +205,10 @@
 
             function submitForm(formId, callback) {
                 let form = $(formId).get(0);
-                form.checkValidity();
                 if (form.checkValidity()) {
                     callback();
                 } else {
-                    form.classList.add('validated');
+                    $(form).addClass('validated');
                 }
             }
 
@@ -220,13 +218,12 @@
                         url: 'https://reqres.in/api/users',
                         type: "POST",
                         data: getNewUser(),
-                        async: true,
                         dataType: "json",
                         error: function () {
                             console.log(arguments);
                         },
                         success: function (response) {
-                            console.log(xhr.response);
+                            console.log(arguments);
                             addUser(response);
                             dialog.close();
                         }
