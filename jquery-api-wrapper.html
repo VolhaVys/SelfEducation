@@ -24,19 +24,19 @@
         );
 
     $(document).ready(function () {
-
             function fillUserTable(pageNumber) {
+                startLoadingAnimation();
                 $.ajax({
                     url: 'https://reqres.in/api/users?page=' + pageNumber,
                     dataType: "json",
                     error: function () {
                         console.log(arguments);
                     },
+                    complete: stopLoadingAnimation,
                     success: function (response) {
                         console.log(response);
                         window.history.pushState(null, 'Title', 'jquery-api-wrapper.html?page=' + pageNumber);
                         let totalPages = response['total_pages'];
-
                         for (let i = 0; i < response.data.length; i++) {
                             addUser(response.data[i]);
                         }
@@ -97,10 +97,12 @@
             }
 
             window.deleteUser = function (id) {
+                startLoadingAnimation();
                 $.ajax({
                     url: 'https://reqres.in/api/users/' + id,
                     type: 'DELETE',
                     dataType: "json",
+                    complete: stopLoadingAnimation,
                     error: function () {
                         console.log(arguments);
                     },
@@ -122,9 +124,11 @@
             };
 
             window.editUser = function (id) {
+                startLoadingAnimation();
                 $.ajax({
                     url: 'https://reqres.in/api/users/' + id,
                     dataType: "json",
+                    complete: stopLoadingAnimation,
                     error: function () {
                         console.log(arguments);
                     },
@@ -145,11 +149,13 @@
             $('#saveUserBtn').click(function (event) {
                 submitForm('#addUserFormEdit', () => {
                     let user = getNewUserEdit();
+                    startLoadingAnimation();
                     $.ajax({
                         url: 'https://reqres.in/api/users/' + user.id,
                         type: "PUT",
                         data: user,
                         dataType: "json",
+                        complete: stopLoadingAnimation,
                         error: function () {
                             console.log(arguments);
                         },
@@ -175,6 +181,19 @@
                     email: $('#email').val(),
                     avatar: 'image/no_photo.png'
                 };
+            }
+            function startLoadingAnimation() {
+                let imgObj = $("#loadImg");
+                let loading = $('#loading');
+                loading.show();
+                imgObj.show();
+            }
+
+            function stopLoadingAnimation() {
+                let imgObj = $("#loadImg");
+                let loading = $('#loading');
+                loading.hide();
+                imgObj.hide();
             }
 
             function getNewUserEdit() {
@@ -204,11 +223,13 @@
 
             $('#addNewUserBtn').click(function () {
                 submitForm('#addUserForm', () => {
+                    startLoadingAnimation();
                     $.ajax({
                         url: 'https://reqres.in/api/users',
                         type: "POST",
                         data: getNewUser(),
                         dataType: "json",
+                        complete: stopLoadingAnimation,
                         error: function () {
                             console.log(arguments);
                         },
@@ -233,6 +254,9 @@
 
 </script>
 <style>
+    body {
+        position: relative;
+    }
     img {
         width: 45px;
     }
@@ -284,6 +308,26 @@
         padding-right: 3px;
     }
 
+    #loadImg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        z-index: 1000;
+        display: none;
+
+    }
+    .loading {
+        display: none;
+        background-color: black;
+        opacity: 0.1;
+        position: absolute;
+        left:0;
+        right:0;
+        top:0;
+        bottom:0;
+        z-index: 999;
+    }
 </style>
 <div class="content">
     <table id="usersTable">
@@ -389,6 +433,8 @@
             <button onclick="editUser(#{id})">Edit</button>
         </td>
     </template>
+    <img src="image/ajax-loader.gif" id="loadImg">
 </div>
+<div class="loading" id="loading"></div>
 </body>
 </html>
