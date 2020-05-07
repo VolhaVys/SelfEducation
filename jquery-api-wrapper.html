@@ -182,18 +182,15 @@
                     avatar: 'image/no_photo.png'
                 };
             }
+
             function startLoadingAnimation() {
-                let imgObj = $("#loadImg");
-                let loading = $('#loading');
-                loading.show();
-                imgObj.show();
+                $('#loading').show();
+                // $("#loadImg").show();
             }
 
             function stopLoadingAnimation() {
-                let imgObj = $("#loadImg");
-                let loading = $('#loading');
-                loading.hide();
-                imgObj.hide();
+                $('#loading').hide();
+                // $("#loadImg").hide();
             }
 
             function getNewUserEdit() {
@@ -257,6 +254,7 @@
     body {
         position: relative;
     }
+
     img {
         width: 45px;
     }
@@ -314,18 +312,16 @@
         left: 50%;
         margin-right: -50%;
         z-index: 1000;
-        display: none;
 
     }
+
     .loading {
-        display: none;
-        background-color: black;
-        opacity: 0.1;
+        background: rgba(0, 0, 0, 0.1);
         position: absolute;
-        left:0;
-        right:0;
-        top:0;
-        bottom:0;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
         z-index: 999;
     }
 </style>
@@ -433,8 +429,9 @@
             <button onclick="editUser(#{id})">Edit</button>
         </td>
     </template>
-    <img src="image/ajax-loader.gif" id="loadImg">
+    <div class="loading" id="loading">
+        <img src="image/ajax-loader.gif" id="loadImg">
+    </div>
 </div>
-<div class="loading" id="loading"></div>
 </body>
 </html>
