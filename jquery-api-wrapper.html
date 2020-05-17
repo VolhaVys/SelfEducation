@@ -185,12 +185,10 @@
 
             function startLoadingAnimation() {
                 $('#loading').show();
-                // $("#loadImg").show();
             }
 
             function stopLoadingAnimation() {
                 $('#loading').hide();
-                // $("#loadImg").hide();
             }
 
             function getNewUserEdit() {
@@ -207,6 +205,26 @@
             $('#showUserFormBtn').click(function () {
                 dialogPolyfill.registerDialog(dialog);
                 dialog.showModal();
+            });
+
+            let dialogLogin = $('#dialogLogin').get(0);
+            $('#login').click(function () {
+                dialogPolyfill.registerDialog(dialogLogin);
+                dialogLogin.showModal();
+            });
+            $('#closeLoginBtn').click(function (e) {
+                e.preventDefault();
+                dialogLogin.close();
+            });
+
+            let dialogRegister = $('#dialogRegister').get(0);
+            $('#register').click(function () {
+                dialogPolyfill.registerDialog(dialogRegister);
+                dialogRegister.showModal();
+            });
+            $('#closeRegisterBtn').click(function (e) {
+                e.preventDefault();
+                dialogRegister.close();
             });
 
             function submitForm(formId, callback) {
@@ -264,10 +282,9 @@
         left: 0;
         right: 0;
         margin: auto;
-        border: solid;
+        border: 1px solid gray;
         padding: 1em;
         background: white;
-        color: black;
         width: 300px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         border-radius: 5px;
@@ -323,6 +340,15 @@
         top: 0;
         bottom: 0;
         z-index: 999;
+    }
+
+    .authorization {
+        display: flex;
+        margin-top: 10px;
+    }
+
+    .login {
+        padding-right: 10px;
     }
 </style>
 <div class="content">
@@ -432,6 +458,58 @@
     <div class="loading" id="loading">
         <img src="image/ajax-loader.gif" id="loadImg">
     </div>
+    <div class="authorization">
+        <div class="login">
+            <button id="login">
+                Login
+            </button>
+        </div>
+        <div class="register">
+            <button id="register">
+                Register
+            </button>
+        </div>
+    </div>
+    <dialog id="dialogLogin">
+        <form id="loginForm">
+            <div class="input">
+                <span>Email: </span>
+                <input name="email" id="emailLogin" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+            </div>
+            <div class="input">
+                <span>Password: </span>
+                <input name="password" id="passwordLogin" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+            </div>
+            <button id="addLoginBtn" type="button">
+                Add
+            </button>
+            <button id="closeLoginBtn" type="button">
+                Close
+            </button>
+        </form>
+    </dialog>
+    <dialog id="dialogRegister">
+        <form id="registerForm">
+            <div class="input">
+                <span>Email: </span>
+                <input name="email" id="emailRegister" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+            </div>
+            <div class="input">
+                <span>Password: </span>
+                <input name="password" id="passwordRegister" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+            </div>
+            <div class="input">
+                <span>Repeat Password: </span>
+                <input name="password" id="passwordLoginRepeat" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+            </div>
+            <button id="addRegisterBtn" type="button">
+                Add
+            </button>
+            <button id="closeRegisterBtn" type="button">
+                Close
+            </button>
+        </form>
+    </dialog>
 </div>
 </body>
 </html>
