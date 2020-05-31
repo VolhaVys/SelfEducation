@@ -235,7 +235,32 @@
                     $(form).addClass('validated');
                 }
             }
+        function getUserRegister() {
+            return {
+                email: $('#emailRegister').val(),
+                password: $('#passwordRegister').val()
+            }
+        }
+        $('#addRegisterBtn').click(function () {
+            submitForm('#registerForm', () => {
+                startLoadingAnimation();
+                $.ajax({
+                    url: 'https://reqres.in/api/register',
+                    type: "POST",
+                    data: getUserRegister(),
+                    dataType: "json",
+                    complete: stopLoadingAnimation,
+                    error: function () {
+                        console.log(arguments);
+                    },
+                    success: function (response) {
+                        console.log(arguments);
+                        dialogRegister.close();
+                    }
 
+                });
+            });
+        });
             $('#addNewUserBtn').click(function () {
                 submitForm('#addUserForm', () => {
                     startLoadingAnimation();
@@ -474,11 +499,11 @@
         <form id="loginForm">
             <div class="input">
                 <span>Email: </span>
-                <input name="email" id="emailLogin" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+                <input name="email" id="emailLogin" pattern="[0-9a-fA-F]{4,8}" required>
             </div>
             <div class="input">
                 <span>Password: </span>
-                <input name="password" id="passwordLogin" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+                <input name="password" id="passwordLogin" pattern="[0-9a-fA-F]{4,8}" required>
             </div>
             <button id="addLoginBtn" type="button">
                 Add
@@ -496,11 +521,11 @@
             </div>
             <div class="input">
                 <span>Password: </span>
-                <input name="password" id="passwordRegister" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+                <input name="password" id="passwordRegister" pattern="[0-9a-fA-F]{4,8}" required>
             </div>
             <div class="input">
                 <span>Repeat Password: </span>
-                <input name="password" id="passwordLoginRepeat" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+                <input name="password" id="passwordLoginRepeat" pattern="[0-9a-fA-F]{4,8}" required>
             </div>
             <button id="addRegisterBtn" type="button">
                 Add
