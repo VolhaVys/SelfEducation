@@ -24,19 +24,19 @@
         );
 
     $(document).ready(function () {
-
             function fillUserTable(pageNumber) {
+                startLoadingAnimation();
                 $.ajax({
                     url: 'https://reqres.in/api/users?page=' + pageNumber,
                     dataType: "json",
                     error: function () {
                         console.log(arguments);
                     },
+                    complete: stopLoadingAnimation,
                     success: function (response) {
                         console.log(response);
                         window.history.pushState(null, 'Title', 'jquery-api-wrapper.html?page=' + pageNumber);
                         let totalPages = response['total_pages'];
-
                         for (let i = 0; i < response.data.length; i++) {
                             addUser(response.data[i]);
                         }
@@ -97,10 +97,12 @@
             }
 
             window.deleteUser = function (id) {
+                startLoadingAnimation();
                 $.ajax({
                     url: 'https://reqres.in/api/users/' + id,
                     type: 'DELETE',
                     dataType: "json",
+                    complete: stopLoadingAnimation,
                     error: function () {
                         console.log(arguments);
                     },
@@ -122,9 +124,11 @@
             };
 
             window.editUser = function (id) {
+                startLoadingAnimation();
                 $.ajax({
                     url: 'https://reqres.in/api/users/' + id,
                     dataType: "json",
+                    complete: stopLoadingAnimation,
                     error: function () {
                         console.log(arguments);
                     },
@@ -145,11 +149,13 @@
             $('#saveUserBtn').click(function (event) {
                 submitForm('#addUserFormEdit', () => {
                     let user = getNewUserEdit();
+                    startLoadingAnimation();
                     $.ajax({
                         url: 'https://reqres.in/api/users/' + user.id,
                         type: "PUT",
                         data: user,
                         dataType: "json",
+                        complete: stopLoadingAnimation,
                         error: function () {
                             console.log(arguments);
                         },
@@ -177,6 +183,14 @@
                 };
             }
 
+            function startLoadingAnimation() {
+                $('#loading').show();
+            }
+
+            function stopLoadingAnimation() {
+                $('#loading').hide();
+            }
+
             function getNewUserEdit() {
                 return {
                     avatar: $('#userAvatar').val(),
@@ -193,6 +207,26 @@
                 dialog.showModal();
             });
 
+            let dialogLogin = $('#dialogLogin').get(0);
+            $('#login').click(function () {
+                dialogPolyfill.registerDialog(dialogLogin);
+                dialogLogin.showModal();
+            });
+            $('#closeLoginBtn').click(function (e) {
+                e.preventDefault();
+                dialogLogin.close();
+            });
+
+            let dialogRegister = $('#dialogRegister').get(0);
+            $('#register').click(function () {
+                dialogPolyfill.registerDialog(dialogRegister);
+                dialogRegister.showModal();
+            });
+            $('#closeRegisterBtn').click(function (e) {
+                e.preventDefault();
+                dialogRegister.close();
+            });
+
             function submitForm(formId, callback) {
                 let form = $(formId).get(0);
                 if (form.checkValidity()) {
@@ -201,26 +235,94 @@
                     $(form).addClass('validated');
                 }
             }
+        function getUserRegister() {
+            return {
+                email: $('#emailRegister').val(),
+                password: $('#passwordRegister').val()
+            }
+        }
+        function getUserLogin() {
+            return {
+                email: $('#emailLogin').val(),
+                password: $('#passwordLogin').val()
+            }
+        }
+        $('#addRegisterBtn').click(function () {
+            submitForm('#registerForm', () => {
+                startLoadingAnimation();
+                $.ajax({
+                    url: 'https://reqres.in/api/register',
+                    type: "POST",
+                    data: getUserRegister(),
+                    dataType: "json",
+                    complete: stopLoadingAnimation,
+                    error: function () {
+                        console.log(arguments);
+                    },
+                    success: function (response) {
+                        console.log(arguments);
+                        localStorage.setItem('email', $('#emailRegister').val());
+                        document.cookie = 'token=' + response.token;
+                        console.log(localStorage.getItem('email'));
+                        dialogRegister.close();
 
-            $('#addNewUserBtn').click(function () {
-                submitForm('#addUserForm', () => {
-                    $.ajax({
-                        url: 'https://reqres.in/api/users',
-                        type: "POST",
-                        data: getNewUser(),
-                        dataType: "json",
-                        error: function () {
-                            console.log(arguments);
-                        },
-                        success: function (response) {
-                            console.log(arguments);
-                            addUser(response);
-                            dialog.close();
-                        }
+                    }
 
-                    });
                 });
             });
+        });
+        $('#addLoginBtn').click(function () {
+            submitForm('#loginForm', () => {
+                startLoadingAnimation();
+                $.ajax({
+                    url: 'https://reqres.in/api/login',
+                    type: "POST",
+                    data: getUserLogin(),
+                    dataType: "json",
+                    complete: stopLoadingAnimation,
+                    error: function () {
+                        console.log(arguments);
+                    },
+                    success: function (response) {
+                        console.log(arguments);
+                        localStorage.setItem('email', $('#emailLogin').val());
+                        document.cookie = 'token=' + response.token;
+                        console.log(localStorage.getItem('email'));
+                        console.log(getCookie('token'));
+                        dialogLogin.close();
+                    }
+
+                });
+            });
+        });
+        function getCookie(name) {
+            let matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+
+            $('#addNewUserBtn').click(function () {
+            submitForm('#addUserForm', () => {
+                startLoadingAnimation();
+                $.ajax({
+                    url: 'https://reqres.in/api/users',
+                    type: "POST",
+                    data: getNewUser(),
+                    dataType: "json",
+                    complete: stopLoadingAnimation,
+                    error: function () {
+                        console.log(arguments);
+                    },
+                    success: function (response) {
+                        console.log(arguments);
+                        addUser(response);
+                        dialog.close();
+                    }
+
+                });
+            });
+        });
 
             $('#closeNewUser').click(function (e) {
                 e.preventDefault();
@@ -233,6 +335,10 @@
 
 </script>
 <style>
+    body {
+        position: relative;
+    }
+
     img {
         width: 45px;
     }
@@ -242,10 +348,9 @@
         left: 0;
         right: 0;
         margin: auto;
-        border: solid;
+        border: 1px solid gray;
         padding: 1em;
         background: white;
-        color: black;
         width: 300px;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         border-radius: 5px;
@@ -284,6 +389,33 @@
         padding-right: 3px;
     }
 
+    #loadImg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        z-index: 1000;
+
+    }
+
+    .loading {
+        background: rgba(0, 0, 0, 0.1);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 999;
+    }
+
+    .authorization {
+        display: flex;
+        margin-top: 10px;
+    }
+
+    .login {
+        padding-right: 10px;
+    }
 </style>
 <div class="content">
     <table id="usersTable">
@@ -389,6 +521,61 @@
             <button onclick="editUser(#{id})">Edit</button>
         </td>
     </template>
+    <div class="loading" id="loading">
+        <img src="image/ajax-loader.gif" id="loadImg">
+    </div>
+    <div class="authorization">
+        <div class="login">
+            <button id="login">
+                Login
+            </button>
+        </div>
+        <div class="register">
+            <button id="register">
+                Register
+            </button>
+        </div>
+    </div>
+    <dialog id="dialogLogin">
+        <form id="loginForm">
+            <div class="input">
+                <span>Email: </span>
+                <input name="email" id="emailLogin" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+            </div>
+            <div class="input">
+                <span>Password: </span>
+                <input name="password" id="passwordLogin" pattern="[0-9a-fA-F]{4,8}" required>
+            </div>
+            <button id="addLoginBtn" type="button">
+                Add
+            </button>
+            <button id="closeLoginBtn" type="button">
+                Close
+            </button>
+        </form>
+    </dialog>
+    <dialog id="dialogRegister">
+        <form id="registerForm">
+            <div class="input">
+                <span>Email: </span>
+                <input name="email" id="emailRegister" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+            </div>
+            <div class="input">
+                <span>Password: </span>
+                <input name="password" id="passwordRegister" pattern="[0-9a-fA-F]{4,8}" required>
+            </div>
+            <div class="input">
+                <span>Repeat Password: </span>
+                <input name="password" id="passwordLoginRepeat" pattern="[0-9a-fA-F]{4,8}" required>
+            </div>
+            <button id="addRegisterBtn" type="button">
+                Add
+            </button>
+            <button id="closeRegisterBtn" type="button">
+                Close
+            </button>
+        </form>
+    </dialog>
 </div>
 </body>
 </html>
