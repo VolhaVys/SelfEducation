@@ -97,30 +97,31 @@
             }
 
             window.deleteUser = function (id) {
-                startLoadingAnimation();
-                $.ajax({
-                    url: 'https://reqres.in/api/users/' + id,
-                    type: 'DELETE',
-                    dataType: "json",
-                    complete: stopLoadingAnimation,
-                    error: function () {
-                        console.log(arguments);
-                    },
-                    success: function (response) {
-                        console.log(arguments);
-                        let userEl = $('#user' + id);
-                        let dialogDelete = $('#dialogDelete').get(0);
-                        dialogPolyfill.registerDialog(dialogDelete);
-                        dialogDelete.showModal();
-                        $('#deleteYes').click(function () {
-                            userEl.remove();
-                            dialogDelete.close();
-                        });
-                        $('#deleteNo').click(function () {
-                            dialogDelete.close();
-                        });
-                    }
-                })
+                let userEl = $('#user' + id);
+                let dialogDelete = $('#dialogDelete').get(0);
+                dialogPolyfill.registerDialog(dialogDelete);
+                dialogDelete.showModal();
+                $('#deleteYes').click(function () {
+                    $.ajax({
+                        url: 'https://reqres.in/api/users/' + id,
+                        type: 'DELETE',
+                        dataType: "json",
+                        complete: stopLoadingAnimation,
+                        error: function () {
+                            console.log(arguments);
+                        },
+                        success: function (response) {
+                            console.log(arguments);
+                        }
+                    })
+                    startLoadingAnimation();
+                    userEl.remove();
+                    dialogDelete.close();
+                });
+                $('#deleteNo').click(function () {
+                    dialogDelete.close();
+                    stopLoadingAnimation();
+                });
             };
 
             window.editUser = function (id) {
